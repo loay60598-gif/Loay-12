@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOUAY PROGRAM | المنصة التعليمية المتكاملة ودليل القيادة</title>
+    
+    <!-- SEO & Open Graph Meta Tags -->
+    <meta name="description" content="منصة LOUAY PROGRAM التعليمية المتكاملة - اختبارات قانون المرور التفاعلية، لوحة متابعة الطالب، حجز دروس القيادة، وبوابة مدارس السياقة.">
+    <meta property="og:title" content="LOUAY PROGRAM | منصة القيادة والتعلم الذكي">
+    <meta property="og:description" content="تدرب على امتحانات قانون المرور الرسمية، احسب التكاليف، احصل على شهادتك التجريبية، واحجز مواعيدك مباشرة عبر منصة LOUAY PROGRAM.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#08a9ff">
+
+    <!-- PWA Web App Manifest -->
+    <link rel="manifest" href="data:application/manifest+json;utf8,{
+        %22name%22:%22LOUAY%20PROGRAM%22,
+        %22short_name%22:%22LOUAY%22,
+        %22start_url%22:%22/%22,
+        %22display%22:%22standalone%22,
+        %22background_color%22:%22#07111f%22,
+        %22theme_color%22:%22#08a9ff%22
+    }">
+
+    <!-- Schema.org Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalApplication",
+      "name": "LOUAY PROGRAM",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "DZD"
+      },
+      "description": "منصة تعليمية محاكاة لاختبارات قانون المرور وحجز مواعيد دروس السياقة."
+    }
+    </script>
+
+    <!-- Google Fonts & External Libraries -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet.js CSS (Free Interactive Map with Layers) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Firebase & EmailJS SDKs -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root {
+            --bg: #07111f;
+            --bg2: #0d1b2d;
+            --card: #102238;
+            --card2: #132a43;
+            --text: #f4f8ff;
+            --muted: #9db0c8;
+            --primary: #08a9ff;
+            --primary2: #006dff;
+            --green: #16c784;
+            --orange: #ffad19;
+            --danger: #ff4d67;
+            --border: rgba(255, 255, 255, .1);
+            --shadow: 0 20px 60px rgba(0,0,0,.3);
+            --radius: 20px;
+        }
+
+        [data-theme="light"] {
+            --bg: #f3f7fc;
+            --bg2: #fff;
+            --card: #fff;
+            --card2: #eef5fc;
+            --text: #101d2e;
+            --muted: #607086;
+            --border: rgba(10, 30, 60, .12);
+            --shadow: 0 15px 40px rgba(20, 50, 90, .12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: "Tajawal", sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        button, input, textarea, select { font: inherit; }
+        button { cursor: pointer; }
+        .container { width: min(1180px, 92%); margin: auto; }
+
+        /* Header Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(7, 17, 31, .88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        [data-theme="light"] header { background: rgba(255, 255, 255, .9); }
+
+        .nav {
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .logo { font-size: 23px; font-weight: 900; white-space: nowrap; }
+        .logo span { color: var(--primary); }
+        
+        nav { display: flex; align-items: center; gap: 6px; }
+        nav a {
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--muted);
+            font-weight: 700;
+            transition: .2s;
+        }
+        nav a:hover, nav a.active {
+            color: var(--text);
+            background: rgba(8, 169, 255, .12);
+        }
+        .nav-actions { display: flex; gap: 8px; align-items: center; }
+        .icon-btn {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 12px;
+            font-weight: 700;
+        }
+        .menu-toggle { display: none; font-size: 22px; line-height: 1; }
+
+        /* Hero Section */
+        .hero {
+            min-height: calc(100vh - 76px);
+            display: grid;
+            place-items: center;
+            text-align: center;
+            position: relative;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(8, 169, 255, .25), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0, 109, 255, .2), transparent 40%);
+        }
+        .hero-content { position: relative; max-width: 850px; padding: 80px 0; }
+        .badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border: 1px solid rgba(8, 169, 255, .35);
+            background: rgba(8, 169, 255, .1);
+            color: #65caff;
+            border-radius: 100px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .hero h1 { font-size: clamp(38px, 6vw, 75px); line-height: 1.1; font-weight: 900; }
+        .gradient {
+            background: linear-gradient(90deg, #08a9ff, #7b61ff);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero p { max-width: 700px; margin: 25px auto; color: var(--muted); font-size: 19px; }
+        .actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .btn {
+            border: 0;
+            padding: 13px 23px;
+            border-radius: 12px;
+            font-weight: 800;
+            transition: .2s;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary2)); color: #fff; }
+        .btn-green { background: var(--green); color: #06150f; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+        /* General Sections */
+        section { padding: 90px 0; }
+        .section-head { text-align: center; margin-bottom: 45px; }
+        .eyebrow { color: var(--primary); font-weight: 800; display: block; margin-bottom: 8px; }
+        .section-head h2 { font-size: 38px; line-height: 1.2; }
+        .section-head p { color: var(--muted); max-width: 700px; margin: 12px auto; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card, .quiz-panel, .auth-panel, .chat-panel, .pricing-card, .dashboard-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+        }
+
+        /* Dashboard & Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: var(--card2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
+        .stat-number { font-size: 32px; font-weight: 900; color: var(--primary); }
+
+        /* Certificate Styling */
+        .certificate {
+            border: 10px double var(--primary);
+            padding: 40px;
+            text-align: center;
+            background: var(--card2);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        /* Pricing Section */
+        .pricing-card { text-align: center; position: relative; transition: .3s; }
+        .pricing-card.popular { border-color: var(--primary); background: var(--card2); }
+        .price-val { font-size: 40px; font-weight: 900; color: var(--primary); margin: 15px 0; }
+        .price-features { list-style: none; margin: 20px 0; text-align: right; }
+        [dir="ltr"] .price-features { text-align: left; }
+        .price-features li { padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--muted); }
+
+        /* Quiz Panel, Timer, and Detailed Review */
+        .quiz-panel { max-width: 850px; margin: auto; }
+        .quiz-meta { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: var(--muted); margin-bottom: 15px; }
+        .quiz-meta strong { color: var(--primary); }
+        .timer-badge { background: rgba(255, 77, 103, 0.15); color: var(--danger); border: 1px solid var(--danger); padding: 4px 12px; border-radius: 20px; font-weight: bold; }
+        .progress { height: 9px; background: rgba(255,255,255,.08); border-radius: 20px; overflow: hidden; margin: 15px 0; }
+        #progressBar { height: 100%; width: 0; background: linear-gradient(90deg, var(--primary), #7b61ff); transition: .3s; }
+        .quiz-img-container { text-align: center; margin: 15px 0; }
+        .quiz-img-container img { max-width: 100%; max-height: 250px; border-radius: 12px; border: 1px solid var(--border); object-fit: contain; }
+        .options { display: grid; gap: 12px; margin: 25px 0; }
+        .option {
+            text-align: right;
+            border: 1px solid var(--border);
+            background: var(--card2);
+            color: var(--text);
+            border-radius: 13px;
+            padding: 15px;
+            width: 100%;
+            transition: .2s;
+        }
+        [dir="ltr"] .option { text-align: left; }
+        .option:hover, .option.selected { border-color: var(--primary); background: rgba(8, 169, 255, .12); }
+        .result { text-align: center; padding: 20px 0; }
+        .result-score { font-size: 50px; color: var(--primary); font-weight: 900; }
+        
+        .review-section { margin-top: 30px; text-align: right; border-top: 1px solid var(--border); padding-top: 20px; }
+        .review-card { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        .review-card.correct-card { border-right: 5px solid var(--green); }
+        .review-card.incorrect-card { border-right: 5px solid var(--danger); }
+        .explanation { background: rgba(8, 169, 255, 0.08); padding: 10px; border-radius: 8px; margin-top: 8px; font-size: 14px; color: var(--muted); }
+
+        /* Forms */
+        .auth-panel { max-width: 500px; margin: auto; }
+        .form { display: grid; gap: 15px; }
+        input, textarea, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card2);
+            color: var(--text);
+            outline: none;
+        }
+
+        /* Community Chat */
+        .chat-panel { max-width: 850px; margin: auto; }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            background: var(--card2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-msg {
+            background: rgba(8, 169, 255, .1);
+            border: 1px solid rgba(8, 169, 255, .2);
+            padding: 12px 16px;
+            border-radius: 14px;
+            max-width: 80%;
+        }
+        .chat-msg.system {
+            background: rgba(22, 199, 132, .15);
+            border-color: rgba(22, 199, 132, .3);
+            align-self: center;
+            text-align: center;
+        }
+        .chat-msg strong { display: block; color: var(--primary); font-size: 14px; }
+        .chat-input-area { display: flex; gap: 10px; }
+
+        /* Calculator & Map */
+        .calculator { max-width: 600px; margin: auto; }
+        .calc-result { margin-top: 20px; padding: 20px; border-radius: 15px; background: rgba(8, 169, 255, .1); text-align: center; }
+        .calc-result strong { font-size: 34px; color: var(--primary); }
+        #mapContainer { height: 380px; width: 100%; border-radius: 15px; margin-top: 20px; border: 1px solid var(--border); z-index: 1; }
+
+        footer { border-top: 1px solid var(--border); padding: 35px 0; color: var(--muted); text-align: center; }
+
+        /* تخصيص محتوى النوافذ المنبثقة على الخريطة */
+        .leaflet-popup-content-wrapper { background: var(--card) !important; color: var(--text) !important; border: 1px solid var(--border); border-radius: 12px; }
+        .leaflet-popup-tip { background: var(--card) !important; }
+
+        @media(max-width: 950px) {
+            .menu-toggle { display: block; }
+            nav {
+                display: none;
+                position: absolute;
+                top: 76px;
+                right: 0;
+                left: 0;
+                background: var(--bg2);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                padding: 20px;
+            }
+            nav.active { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container nav">
+        <a href="#home" class="logo">LOUAY <span>PROGRAM</span></a>
+
+        <button class="icon-btn menu-toggle" onclick="toggleMenu()" aria-label="Toggle Navigation">☰</button>
+
+        <nav id="navMenu">
+            <a href="#home" onclick="closeMenu()" data-i18n="nav_home">الرئيسية</a>
+            <a href="#dashboard" onclick="closeMenu()" data-i18n="nav_dashboard">لوحة التحكم</a>
+            <a href="#pricing" onclick="closeMenu()" data-i18n="nav_pricing">الاشتراكات</a>
+            <a href="#booking" onclick="closeMenu()" data-i18n="nav_booking">الحجز</a>
+            <a href="#quiz" onclick="closeMenu()" data-i18n="nav_quiz">الاختبارات</a>
+            <a href="#schools" onclick="closeMenu()" data-i18n="nav_schools">مدارس السياقة</a>
+            <a href="#community" onclick="closeMenu()" data-i18n="nav_community">المجتمع</a>
+            <a href="#calculator" onclick="closeMenu()" data-i18n="nav_calculator">الحاسبة</a>
+            <a href="#auth" onclick="closeMenu()" data-i18n="nav_auth">الحساب</a>
+            <a href="#contact" onclick="closeMenu()" data-i18n="nav_contact">التواصل</a>
+        </nav>
+
+        <div class="nav-actions">
+            <button class="icon-btn" id="langBtn" onclick="toggleLanguage()">EN</button>
+            <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <span class="badge" data-i18n="hero_badge">🚗 المنصة التعليمية الذكية لـ LOUAY PROGRAM</span>
+            <h1><span data-i18n="hero_welcome">تعلم، تدرب، واحصل على</span> <span class="gradient">رخصة القيادة</span></h1>
+            <p data-i18n="hero_desc">المنصة الشاملة لتعلم قوانين المرور، إجراء الاختبارات المحاكية التفاعلية، متابعة تقدمك، وحجز حصص القيادة المباشرة.</p>
+            <div class="actions">
+                <a class="btn btn-primary" href="#quiz" data-i18n="btn_quiz">📝 ابدأ الاختبار التفاعلي</a>
+                <a class="btn btn-green" href="#pricing" data-i18n="btn_pricing">💳 خطط الاشتراك</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Dashboard Section -->
+    <section id="dashboard">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="dash_eyebrow">إحصائياتك الشخصية</span>
+                <h2 data-i18n="dash_title">لوحة متابعة تقدم الطالب 📊</h2>
+            </div>
+            <div class="dashboard-card">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number" id="statsCompleted">0</div>
+                        <div data-i18n="stat_quizzes">الاختبارات المجتازة</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="statsScore">0%</div>
+                        <div data-i18n="stat_avg">متوسط النتائج</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="statsRole">طالب</div>
+                        <div data-i18n="stat_role">نوع الحساب</div>
+                    </div>
+                </div>
+
+                <div id="certContainer" hidden>
+                    <div class="certificate">
+                        <h3>🏆 شهادة إتمام تجريبية</h3>
+                        <p>تشهد منصة <strong>LOUAY PROGRAM</strong> أن الطالب:</p>
+                        <h2 id="certName" style="color: var(--primary); margin: 10px 0;">اسم الطالب</h2>
+                        <p>قد اجتاز بنجاح الاختبار الشامل لمحاكاة امتحانات رخصة القيادة بنسبة ممتازة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscriptions Section -->
+    <section id="pricing">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="pricing_eyebrow">خطط الاشتراك</span>
+                <h2 data-i18n="pricing_title">اختر الخطة المناسبة لك 💳</h2>
+                <p data-i18n="pricing_desc">اشترك للوصول إلى كافة بنوك الأسئلة الشاملة (+300 سؤال)، الدروس الحصرية، وحجز المواعيد المباشرة.</p>
+            </div>
+            <div class="grid">
+                <div class="pricing-card">
+                    <h3 data-i18n="plan_free_title">الخطة المجانية (Freemium)</h3>
+                    <div class="price-val">0 دج</div>
+                    <ul class="price-features">
+                        <li data-i18n="f1">✓ الوصول لـ 3 اختبارات أساسية</li>
+                        <li data-i18n="f2">✓ المشاركة في الشات الجماعي</li>
+                        <li data-i18n="f3">✓ استخدام حاسبة التكاليف</li>
+                    </ul>
+                    <a href="#quiz" class="btn btn-outline" style="width: 100%;" data-i18n="btn_start_free">ابدأ مجاناً</a>
+                </div>
+                <div class="pricing-card popular">
+                    <span class="badge" data-i18n="plan_pop">الأكثر طلباً 🔥</span>
+                    <h3 data-i18n="plan_pro_title">اشتراك الطالب Pro</h3>
+                    <div class="price-val">1500 دج <small style="font-size: 14px;">/شهر</small></div>
+                    <ul class="price-features">
+                        <li data-i18n="f4">✓ بنك أسئلة كامل (+300 سؤال وشرح فيديو)</li>
+                        <li data-i18n="f5">✓ تتبع التقدم وإصدار الشهادة التجريبية</li>
+                        <li data-i18n="f6">✓ حجز حصص سياقة مباشرة</li>
+                        <li data-i18n="f7">✓ دعم أولوية عبر الشات</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="requestPayment('اشتراك الطالب Pro', 1500)" data-i18n="btn_sub_pro">اشترك الآن (بطاقة ذهبية / CIB)</button>
+                </div>
+                <div class="pricing-card">
+                    <h3 data-i18n="plan_school_title">خطة مدارس السياقة (B2B)</h3>
+                    <div class="price-val">8000 دج <small style="font-size: 14px;">/شهر</small></div>
+                    <ul class="price-features">
+                        <li data-i18n="f8">✓ حساب خاص لمدرسة السياقة</li>
+                        <li data-i18n="f9">✓ إدارة ومتابعة طلاب المدرسة</li>
+                        <li data-i18n="f10">✓ تنظيم جدول الحصص ومنع تضارب المواعيد</li>
+                    </ul>
+                    <button class="btn btn-green" style="width: 100%;" onclick="requestPayment('خطة مدارس السياقة', 8000)" data-i18n="btn_sub_school">طلب حساب مدرسة</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking System Section -->
+    <section id="booking">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="booking_eyebrow">حجز المواعيد</span>
+                <h2 data-i18n="booking_title">احجز حصة قيادة أو استشارة أونلاين 📅</h2>
+            </div>
+            <div class="auth-panel">
+                <form class="form" onsubmit="handleBooking(event)">
+                    <label data-i18n="lbl_service">نوع الخدمة:</label>
+                    <select id="bookingService" required>
+                        <option value="حصة قيادة تطبيقية (Créneau)">حصة قيادة تطبيقية (Créneau / Circuit)</option>
+                        <option value="مراجعة قانون المرور">درس مراجعة قانون المرور</option>
+                        <option value="استشارة خاصة">استشارة برمجية وخاصة</option>
+                    </select>
+                    <label data-i18n="lbl_date">اختر التاريخ:</label>
+                    <input type="date" id="bookingDate" required>
+                    <label data-i18n="lbl_time">اختر الوقت:</label>
+                    <input type="time" id="bookingTime" required>
+                    <button type="submit" class="btn btn-primary" data-i18n="btn_book">تأكيد الحجز المباشر</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Driving Schools Map with Satellite & Street View -->
+    <section id="schools">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow">B2B & GPS Portal</span>
+                <h2>دليل وخريطة مدارس السياقة المعتمدة 🗺️</h2>
+                <p>يمكنك التبديل بين رؤية الشوارع والأقمار الصناعية بالكامل للتعرف على المكان بدقة.</p>
+            </div>
+            
+            <div class="card" style="margin-bottom: 30px;">
+                <label>اختر الولاية لتصفية المدارس القريبة:</label>
+                <select id="wilayaSelect" onchange="filterSchoolsByWilaya()" style="margin-top: 10px;">
+                    <option value="all">كل الولايات</option>
+                    <option value="01">01 - أدرار</option>
+                    <option value="02">02 - الشلف</option>
+                    <option value="03">03 - الأغواط</option>
+                    <option value="04">04 - أم البواقي</option>
+                    <option value="05">05 - باتنة</option>
+                    <option value="06">06 - بجاية</option>
+                    <option value="07">07 - بسكرة</option>
+                    <option value="08">08 - بشار</option>
+                    <option value="09">09 - البليدة</option>
+                    <option value="10">10 - البويرة</option>
+                    <option value="11">11 - تمنراست</option>
+                    <option value="12">12 - تبسة</option>
+                    <option value="13">13 - تلمسان</option>
+                    <option value="14">14 - تيارت</option>
+                    <option value="15">15 - تيزي وزو</option>
+                    <option value="16">16 - الجزائر العاصمة</option>
+                    <option value="17">17 - الجلفة</option>
+                    <option value="18">18 - جيجل</option>
+                    <option value="19">19 - سطيف</option>
+                    <option value="20">20 - سعيدة</option>
+                    <option value="21">21 - سكيكدة</option>
+                    <option value="22">22 - سيدي بلعباس</option>
+                    <option value="23">23 - عنابة</option>
+                    <option value="24">24 - قالمة</option>
+                    <option value="25">25 - قسنطينة</option>
+                    <option value="26">26 - المدية</option>
+                    <option value="27">27 - مستغانم</option>
+                    <option value="28">28 - المسيلة</option>
+                    <option value="29">29 - معسكر</option>
+                    <option value="30">30 - ورقلة</option>
+                    <option value="31">31 - وهران</option>
+                    <option value="32">32 - البيض</option>
+                    <option value="33">33 - إليزي</option>
+                    <option value="34">34 - برج بوعريريج</option>
+                    <option value="35">35 - بومرداس</option>
+                    <option value="36">36 - الطارف</option>
+                    <option value="37">37 - تندوف</option>
+                    <option value="38">38 - تسمسيلت</option>
+                    <option value="39">39 - الوادي</option>
+                    <option value="40">40 - خنشلة</option>
+                    <option value="41">41 - سوق أهراس</option>
+                    <option value="42">42 - تيبازة</option>
+                    <option value="43">43 - ميلة</option>
+                    <option value="44">44 - عين الدفلى</option>
+                    <option value="45">45 - النعامة</option>
+                    <option value="46">46 - عين تموشنت</option>
+                    <option value="47">47 - غرداية</option>
+                    <option value="48">48 - غليزان</option>
+                    <option value="49">49 - تيميمون</option>
+                    <option value="50">50 - برج باجي مختار</option>
+                    <option value="51">51 - أولاد جلال</option>
+                    <option value="52">52 - بني عباس</option>
+                    <option value="53">53 - إن صالح</option>
+                    <option value="54">54 - إن قزام</option>
+                    <option value="55">55 - تقرت</option>
+                    <option value="56">56 - المغير</option>
+                    <option value="57">57 - المنيعة</option>
+                    <option value="58">58 - المنيعة الحديثة</option>
+                </select>
+                <div id="mapContainer"></div>
+            </div>
+
+            <div class="card" style="max-width: 850px; margin: auto;">
+                <h3>لوحة متابعة حصص اليوم (للمدربين)</h3>
+                <br>
+                <table style="width: 100%; text-align: right; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="padding: 10px;">الطالب</th>
+                            <th style="padding: 10px;">نوع الحصة</th>
+                            <th style="padding: 10px;">التوقيت</th>
+                            <th style="padding: 10px;">إرسال تنبيه SMS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 10px;">أحمد محمد</td>
+                            <td style="padding: 10px;">Créneau</td>
+                            <td style="padding: 10px;">09:00 صباحاً</td>
+                            <td style="padding: 10px;"><button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="sendSMSReminder('أحمد محمد')">📱 إرسال</button></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">سارة علي</td>
+                            <td style="padding: 10px;">السياقة في المدينة</td>
+                            <td style="padding: 10px;">11:00 صباحاً</td>
+                            <td style="padding: 10px;"><button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="sendSMSReminder('سارة علي')">📱 إرسال</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Account / Registration Section -->
+    <section id="auth">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="auth_eyebrow">حساب المستخدم</span>
+                <h2 data-i18n="auth_title">تسجيل الدخول / إنشاء حساب</h2>
+            </div>
+            <div class="auth-panel">
+                <div id="userProfile" hidden>
+                    <h3 id="welcomeUser">مرحباً!</h3>
+                    <p data-i18n="auth_logged_in">أنت الآن مسجل في المنصة. يمكنك متابعة نتائجك وتفعيل اشتراكك.</p>
+                    <br>
+                    <button class="btn btn-outline" onclick="logoutUser()" data-i18n="auth_logout">تسجيل الخروج</button>
+                </div>
+                <form id="authForm" class="form" onsubmit="handleAuth(event)">
+                    <input type="text" id="username" placeholder="اسم المستخدم" required>
+                    <input type="email" id="userEmail" placeholder="البريد الإلكتروني" required>
+                    <input type="password" id="userPassword" placeholder="كلمة المرور" required>
+                    <select id="userRole">
+                        <option value="طالب">طالب (Student)</option>
+                        <option value="مدرب / مدرسة سياقة">مدرب / مدرسة سياقة (Instructor)</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" data-i18n="auth_submit">الدخول للمنصة</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Quiz Section -->
+    <section id="quiz">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="quiz_eyebrow">اختبار القيادة</span>
+                <h2 data-i18n="quiz_title">اختبر معلوماتك في قوانين المرور 🧠</h2>
+            </div>
+
+            <div class="quiz-panel">
+                <div class="quiz-meta">
+                    <span><span data-i18n="quiz_bank">بنك الأسئلة:</span> <strong>تفاعلي شامل</strong></span>
+                    <span><span data-i18n="quiz_current">السؤال:</span> <strong id="questionNumber">0/0</strong></span>
+                    <span class="timer-badge">⏱️ الوقت المتبقي: <span id="timerCount">30</span>ث</span>
+                </div>
+
+                <div id="quizStart" style="text-align: center;">
+                    <h3 data-i18n="quiz_ready">جاهز للاختبار المحاكي؟</h3>
+                    <p data-i18n="quiz_start_desc">أسئلة تتضمن أسبقية المرور، إشارات المنع والخطر، والمناورات مع مؤقت 30 ثانية لكل سؤال.</p>
+                    <br>
+                    <button class="btn btn-primary" onclick="startQuiz()" data-i18n="quiz_start_btn">📝 ابدأ الاختبار الآن</button>
+                </div>
+
+                <div id="quizGame" hidden>
+                    <div class="progress"><div id="progressBar"></div></div>
+                    <h3 id="questionText"></h3>
+                    <div id="questionImgContainer" class="quiz-img-container" hidden>
+                        <img id="questionImg" src="" alt="إشارة المرور / تقاطع الطرق">
+                    </div>
+                    <div class="options" id="options"></div>
+                    <button class="btn btn-primary" onclick="nextQuestion()" data-i18n="quiz_next">السؤال التالي ➡️</button>
+                </div>
+
+                <div id="quizResult" class="result" hidden>
+                    <h3 data-i18n="quiz_completed">انتهى الاختبار 🎉</h3>
+                    <div class="result-score" id="finalScore">0/0</div>
+                    <p id="resultMessage"></p>
+                    <br>
+                    
+                    <div class="review-section">
+                        <h3>📚 مراجعة وتفسير الإجابات:</h3>
+                        <div id="reviewContainer"></div>
+                    </div>
+
+                    <div class="actions" style="margin-top: 25px;">
+                        <button class="btn btn-primary" onclick="startQuiz()" data-i18n="quiz_retry">🔄 إعادة الاختبار</button>
+                        <button class="btn btn-green" onclick="shareResultToChat()" data-i18n="quiz_share">📢 نشر النتيجة في الشات</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Chat Section -->
+    <section id="community">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="chat_eyebrow">المجتمع</span>
+                <h2 data-i18n="chat_title">الشات والمنتدى الجماعي 💬</h2>
+            </div>
+
+            <div class="chat-panel">
+                <div class="chat-box" id="chatBox">
+                    <div class="chat-msg system">
+                        <strong data-i18n="chat_system">النظام</strong>
+                        <span data-i18n="chat_welcome_msg">مرحباً بكم في المجتمع التعليمي لمشروع LOUAY PROGRAM!</span>
+                    </div>
+                </div>
+
+                <form class="chat-input-area" onsubmit="sendMessageToChat(event)">
+                    <input type="text" id="chatInput" placeholder="اكتب رسالتك هنا..." required>
+                    <button type="submit" class="btn btn-primary" data-i18n="chat_send">إرسال</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cost Calculator -->
+    <section id="calculator">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="calc_eyebrow">الحاسبة</span>
+                <h2 data-i18n="calc_title">حاسبة تكلفة رخصة السياقة</h2>
+            </div>
+            <div class="calculator card">
+                <label data-i18n="calc_base">السعر الأساسي للملف والدروس (دج):</label>
+                <input id="basePrice" type="number" value="32000" onchange="calculateCost()">
+                <br><br>
+                <label data-i18n="calc_extra">رسوم الامتحانات والملف (دج):</label>
+                <input id="extraCost" type="number" value="3000" onchange="calculateCost()">
+                <br><br>
+                <label data-i18n="calc_hours">عدد الساعات الإضافية التطبيقية:</label>
+                <input id="hours" type="number" value="0" min="0" onchange="calculateCost()">
+                <br><br>
+                <button class="btn btn-primary" onclick="calculateCost()" data-i18n="calc_btn">🧮 احسب التكلفة</button>
+                <div class="calc-result">
+                    <span data-i18n="calc_total">التكلفة الإجمالية التقديرية:</span><br>
+                    <strong id="totalCost">35000 دج</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow" data-i18n="contact_eyebrow">التواصل</span>
+                <h2 data-i18n="contact_title">تواصل معنا المباشر 📩</h2>
+            </div>
+            <form class="form" style="max-width: 600px; margin: auto;" onsubmit="sendEmail(event)">
+                <input type="text" id="contactName" placeholder="الاسم الكامل" required>
+                <input type="email" id="contactEmail" placeholder="البريد الإلكتروني" required>
+                <textarea id="contactMessage" placeholder="اكتب رسالتك هنا..." rows="4" required></textarea>
+                <button type="submit" class="btn btn-primary" data-i18n="contact_send">📨 إرسال الرسالة</button>
+            </form>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <div class="container">
+        <strong>LOUAY PROGRAM</strong>
+        <p>Dream • Code • Create • Drive Safely</p>
+        <p>© 2026 جميع الحقوق محفوظة - المنصة التعليمية المتكاملة</p>
+    </div>
+</footer>
+
+<script>
+/* =========================================================
+   1. بنك الأسئلة المتطور
+========================================================= */
+const questionBankReal = [
+    { 
+        q: "في هذا التقاطع بدون إشارات، ما هو ترتيب أولوية مرور السيارات؟", 
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Algeria_road_sign_B1.svg/200px-Algeria_road_sign_B1.svg.png", 
+        correct: "تمر السيارة الحمراء أولاً (اليمين فارغ)، ثم الزرقاء.", 
+        options: [
+            "تمر السيارة الحمراء أولاً (اليمين فارغ)، ثم الزرقاء.", 
+            "تمر السيارة الزرقاء أولاً.", 
+            "تمر جميع السيارات في نفس الوقت.", 
+            "أولوية المرور للشاحنة فقط."
+        ],
+        explanation: "قانون أولوية اليمين: السيارة التي يكون يمينها خالياً تماماً تكون لها الأسبقية أولاً."
+    },
+    { 
+        q: "هل يُسمح بالتجاوز عند وجود خط طولي متصل في منتصف الطريق؟", 
+        image: "",
+        correct: "يُمنع التجاوز تماماً وتخطي الخط المتصل.", 
+        options: [
+            "يُمنع التجاوز تماماً وتخطي الخط المتصل.", 
+            "يُسمح بالتجاوز فقط في النهار.", 
+            "يُسمح بتجاوز الشاحنات فقط.", 
+            "يُسمح بالتجاوز بشرط تشغيل الغماز."
+        ],
+        explanation: "الخط الطولي المتصل بمثابة جدار فرضي يُمنع ملامسته أو تجاوزه تماماً."
+    },
+    { 
+        q: "ماذا تعني إشارة قف (STOP) الموضحة في التقاطعات؟", 
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Algeria_road_sign_AB4.svg/200px-Algeria_road_sign_AB4.svg.png", 
+        correct: "التوقف التام عند الخط وإعطاء الأولوية لليمين واليسار.", 
+        options: [
+            "التوقف التام عند الخط وإعطاء الأولوية لليمين واليسار.", 
+            "التمهل والمرور دون توقف إذا كان الطريق خالياً.", 
+            "التوقف فقط إذا كانت هناك سيارة شرطة.", 
+            "إعطاء الأولوية للقادم من اليسار فقط."
+        ],
+        explanation: "إشارة STOP تلزم السائق بالتوقف المكتمل وإعطاء الأسبقية للجميع."
+    },
+    { 
+        q: "ما هي السرعة القصوى المسموح بها داخل المناطق السكنية والحضرية؟", 
+        image: "",
+        correct: "50 كم/ساعة.", 
+        options: ["50 كم/ساعة.", "80 كم/ساعة.", "100 كم/ساعة.", "30 كم/ساعة."],
+        explanation: "تحدد السرعة بـ 50 كم/س داخل المناطق الحضرية لضمان السلامة."
+    }
+];
+
+/* =========================================================
+   2. إدارة الاختبار والمؤقت والمراجعة
+========================================================= */
+let quizQuestions = [];
+let currentQuestion = 0;
+let score = 0;
+let selectedAnswer = null;
+let userAnswers = [];
+let timerInterval = null;
+let timeLeft = 30;
+
+function startQuiz() {
+    quizQuestions = [...questionBankReal].sort(() => Math.random() - 0.5);
+    currentQuestion = 0;
+    score = 0;
+    userAnswers = [];
+
+    document.getElementById("quizStart").hidden = true;
+    document.getElementById("quizResult").hidden = true;
+    document.getElementById("quizGame").hidden = false;
+    showQuestion();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 30;
+    document.getElementById("timerCount").textContent = timeLeft;
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timerCount").textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            if (selectedAnswer === null) selectedAnswer = "لم يتم الاختيار (انتهى الوقت)";
+            nextQuestion();
+        }
+    }, 1000);
+}
+
+function showQuestion() {
+    const item = quizQuestions[currentQuestion];
+    selectedAnswer = null;
+    document.getElementById("questionNumber").textContent = (currentQuestion + 1) + "/" + quizQuestions.length;
+    document.getElementById("questionText").textContent = item.q;
+    document.getElementById("progressBar").style.width = ((currentQuestion + 1) / quizQuestions.length * 100) + "%";
+
+    const imgContainer = document.getElementById("questionImgContainer");
+    const imgElem = document.getElementById("questionImg");
+    if (item.image) {
+        imgElem.src = item.image;
+        imgContainer.hidden = false;
+    } else {
+        imgContainer.hidden = true;
+    }
+
+    const optionsElem = document.getElementById("options");
+    optionsElem.innerHTML = "";
+
+    [...item.options].sort(() => Math.random() - 0.5).forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = opt;
+        btn.onclick = () => {
+            document.querySelectorAll(".option").forEach(x => x.classList.remove("selected"));
+            btn.classList.add("selected");
+            selectedAnswer = opt;
+        };
+        optionsElem.appendChild(btn);
+    });
+
+    startTimer();
+}
+
+function nextQuestion() {
+    clearInterval(timerInterval);
+    if (selectedAnswer === null) {
+        alert("يرجى اختيار إجابة قبل الانتقال للسؤال التالي.");
+        startTimer();
+        return;
+    }
+
+    const currentItem = quizQuestions[currentQuestion];
+    const isCorrect = selectedAnswer === currentItem.correct;
+    if (isCorrect) score++;
+
+    userAnswers.push({
+        question: currentItem.q,
+        userAns: selectedAnswer,
+        correctAns: currentItem.correct,
+        isCorrect: isCorrect,
+        explanation: currentItem.explanation
+    });
+
+    if (currentQuestion < quizQuestions.length - 1) {
+        currentQuestion++;
+        showQuestion();
+    } else {
+        finishQuiz();
+    }
+}
+
+function finishQuiz() {
+    clearInterval(timerInterval);
+    document.getElementById("quizGame").hidden = true;
+    document.getElementById("quizResult").hidden = false;
+    document.getElementById("finalScore").textContent = score + "/" + quizQuestions.length;
+    
+    const reviewContainer = document.getElementById("reviewContainer");
+    reviewContainer.innerHTML = "";
+
+    userAnswers.forEach((ans, idx) => {
+        const card = document.createElement("div");
+        card.className = `review-card ${ans.isCorrect ? 'correct-card' : 'incorrect-card'}`;
+        card.innerHTML = `
+            <strong>س${idx + 1}: ${ans.question}</strong><br>
+            <span>إجابتك: <span style="color: ${ans.isCorrect ? 'var(--green)' : 'var(--danger)'}">${ans.userAns}</span></span><br>
+            ${!ans.isCorrect ? `<span>الإجابة الصحيحة: <strong style="color: var(--green)">${ans.correctAns}</strong></span><br>` : ''}
+            <div class="explanation">⚖️ <strong>السبب القانوني:</strong> ${ans.explanation}</div>
+        `;
+        reviewContainer.appendChild(card);
+    });
+
+    userStats.completed += 1;
+    userStats.totalScore += score;
+    localStorage.setItem("louay_stats", JSON.stringify(userStats));
+    updateAuthAndStatsUI();
+}
+
+/* =========================================================
+   3. الخريطة التفاعلية ورؤية الشوارع والأقمار الصناعية
+========================================================= */
+let map, markers = [];
+let streetLayer, satelliteLayer;
+
+const drivingSchoolsData = [
+    { name: "مدرسة الأمل لسياقة السيارات", wilaya: "16", lat: 36.7538, lng: 3.0588, address: "الجزائر العاصمة - باب الزوار" },
+    { name: "مدرسة التحدي للقيادة", wilaya: "31", lat: 35.6971, lng: -0.6308, address: "وهران - وهران المدينة" },
+    { name: "مدرسة النصر بقسنطينة", wilaya: "25", lat: 36.365, lng: 6.6147, address: "قسنطينة - سيدي مبروك" },
+    { name: "مدرسة الأوراس بباتنة", wilaya: "05", lat: 35.5558, lng: 6.1743, address: "باتنة - وسط المدينة" }
+];
+
+function initMap() {
+    // 1. خريطة الشوارع العادية
+    streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    });
+
+    // 2. خريطة الأقمار الصناعية (صور بدقة عالية)
+    satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles © Esri'
+    });
+
+    map = L.map('mapContainer', {
+        center: [36.7538, 3.0588],
+        zoom: 6,
+        layers: [streetLayer]
+    });
+
+    // إمكانية التبديل بين الطبقات في الخريطة
+    const baseMaps = {
+        "🗺️ خريطة الشوارع": streetLayer,
+        "🛰️ صور الأقمار الصناعية": satelliteLayer
+    };
+    L.control.layers(baseMaps).addTo(map);
+
+    displayMarkers(drivingSchoolsData);
+}
+
+function displayMarkers(schools) {
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+
+    schools.forEach(school => {
+        // رابط يفتح الموقع والرؤية الافتراضية 360 درجة عبر Google Street View
+        const streetViewUrl = `https://www.google.com/maps?q=&layer=c&cbll=${school.lat},${school.lng}`;
+
+        const marker = L.marker([school.lat, school.lng]).addTo(map)
+            .bindPopup(`
+                <div style="text-align: right;">
+                    <b style="font-size: 15px; color: var(--primary);">${school.name}</b><br>
+                    <small>${school.address}</small><br><br>
+                    <a href="${streetViewUrl}" target="_blank" class="btn btn-primary" style="padding: 5px 12px; font-size: 12px; display: inline-block;">
+                        👁️ رؤية الشارع (Google Street View)
+                    </a>
+                </div>
+            `);
+        markers.push(marker);
+    });
+}
+
+function filterSchoolsByWilaya() {
+    const selected = document.getElementById("wilayaSelect").value;
+    if (selected === "all") {
+        displayMarkers(drivingSchoolsData);
+        map.setView([36.7538, 3.0588], 6);
+    } else {
+        const filtered = drivingSchoolsData.filter(s => s.wilaya === selected);
+        displayMarkers(filtered);
+        if (filtered.length > 0) {
+            map.setView([filtered[0].lat, filtered[0].lng], 12);
+        } else {
+            alert("لا توجد مدارس مسجلة حالياً في هذه الولاية، سيتم إضافة مدارس جديدة قريباً.");
+        }
+    }
+}
+
+/* =========================================================
+   4. طلب الدفع الآمن والحسابات
+========================================================= */
+let currentUser = JSON.parse(localStorage.getItem("louay_user")) || null;
+let userStats = JSON.parse(localStorage.getItem("louay_stats")) || { completed: 0, totalScore: 0 };
+
+async function requestPayment(planName, amount) {
+    if (!currentUser) {
+        alert("يرجى تسجيل الدخول أولاً لتفعيل الاشتراك!");
+        window.location.href = "#auth";
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/create-checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ plan: planName, amount: amount, userEmail: currentUser.email })
+        });
+        const data = await response.json();
+
+        if (data.checkoutUrl) {
+            window.location.href = data.checkoutUrl;
+        } else {
+            alert(`طلب اشتراك بـ (${planName}) بمبلغ ${amount} دج.\n\n` +
+                  `للدفع يدوياً عبر BaridiMob أرسل إلى RIP:\n00799999000123456789 22`);
+        }
+    } catch (err) {
+        alert(`طلب اشتراك بـ (${planName}) بمبلغ ${amount} دج.\n\n` +
+              `للدفع يدوياً عبر BaridiMob أرسل إلى RIP:\n00799999000123456789 22`);
+    }
+}
+
+function updateAuthAndStatsUI() {
+    if (currentUser) {
+        document.getElementById("authForm").hidden = true;
+        document.getElementById("userProfile").hidden = false;
+        document.getElementById("welcomeUser").textContent = "مرحباً يا " + currentUser.username + "!";
+        document.getElementById("statsRole").textContent = currentUser.role || "طالب";
+        document.getElementById("certName").textContent = currentUser.username;
+    } else {
+        document.getElementById("authForm").hidden = false;
+        document.getElementById("userProfile").hidden = true;
+    }
+
+    document.getElementById("statsCompleted").textContent = userStats.completed;
+    const avg = userStats.completed > 0 ? Math.round((userStats.totalScore / (userStats.completed * questionBankReal.length)) * 100) : 0;
+    document.getElementById("statsScore").textContent = avg + "%";
+
+    if (avg >= 75 && userStats.completed >= 1) {
+        document.getElementById("certContainer").hidden = false;
+    }
+}
+
+function handleAuth(event) {
+    event.preventDefault();
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("userEmail").value;
+    const role = document.getElementById("userRole").value;
+
+    currentUser = { username, email, role };
+    localStorage.setItem("louay_user", JSON.stringify(currentUser));
+    updateAuthAndStatsUI();
+    alert("تم تسجيل دخولك بنجاح!");
+}
+
+function logoutUser() {
+    currentUser = null;
+    localStorage.removeItem("louay_user");
+    updateAuthAndStatsUI();
+}
+
+function sendSMSReminder(studentName) {
+    alert(`📱 تم إرسال إشعار تذكير لموعد التطبيقي للطالب: ${studentName}`);
+}
+
+function calculateCost() {
+    const base = Number(document.getElementById("basePrice").value) || 0;
+    const extra = Number(document.getElementById("extraCost").value) || 0;
+    const hours = Number(document.getElementById("hours").value) || 0;
+    const total = base + extra + (hours * 1200);
+    document.getElementById("totalCost").textContent = total.toLocaleString() + " دج";
+}
+
+function handleBooking(event) {
+    event.preventDefault();
+    alert("تم تسجيل حجزك بنجاح!");
+}
+
+function sendEmail(event) {
+    event.preventDefault();
+    alert("تم إرسال رسالتك بنجاح!");
+    event.target.reset();
+}
+
+/* =========================================================
+   5. التهيئة العامة والوضع الليلي
+========================================================= */
+function toggleMenu() { document.getElementById("navMenu").classList.toggle("active"); }
+function closeMenu() { document.getElementById("navMenu").classList.remove("active"); }
+
+function toggleTheme() {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    const newTheme = isLight ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("louay_theme", newTheme);
+    document.getElementById("themeBtn").textContent = isLight ? "☀️" : "🌙";
+}
+
+window.onload = () => {
+    initMap();
+    calculateCost();
+    updateAuthAndStatsUI();
+};
+</script>
+
+<script src="/app.js"></script>
+</body>
+</html>
